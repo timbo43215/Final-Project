@@ -14,6 +14,15 @@
 		AB849A0F29E0A47E00650EC3 /* Final_ProjectTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB849A0E29E0A47E00650EC3 /* Final_ProjectTests.swift */; };
 		AB849A1929E0A47E00650EC3 /* Final_ProjectUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB849A1829E0A47E00650EC3 /* Final_ProjectUITests.swift */; };
 		AB849A1B29E0A47E00650EC3 /* Final_ProjectUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB849A1A29E0A47E00650EC3 /* Final_ProjectUITestsLaunchTests.swift */; };
+		AB849A2829E0B2C700650EC3 /* Spins.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB849A2729E0B2C700650EC3 /* Spins.swift */; };
+		AB849A2929E0B2C700650EC3 /* Spins.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB849A2729E0B2C700650EC3 /* Spins.swift */; };
+		AB849A2A29E0B2C700650EC3 /* Spins.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB849A2729E0B2C700650EC3 /* Spins.swift */; };
+		AB849A2C29E0C4DB00650EC3 /* Energy.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB849A2B29E0C4DB00650EC3 /* Energy.swift */; };
+		AB849A2D29E0C4DB00650EC3 /* Energy.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB849A2B29E0C4DB00650EC3 /* Energy.swift */; };
+		AB849A2E29E0C4DB00650EC3 /* Energy.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB849A2B29E0C4DB00650EC3 /* Energy.swift */; };
+		AB849A3029E0C67500650EC3 /* Potential.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB849A2F29E0C67500650EC3 /* Potential.swift */; };
+		AB849A3129E0C67500650EC3 /* Potential.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB849A2F29E0C67500650EC3 /* Potential.swift */; };
+		AB849A3229E0C67500650EC3 /* Potential.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB849A2F29E0C67500650EC3 /* Potential.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -45,6 +54,9 @@
 		AB849A1429E0A47E00650EC3 /* Final ProjectUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Final ProjectUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		AB849A1829E0A47E00650EC3 /* Final_ProjectUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Final_ProjectUITests.swift; sourceTree = "<group>"; };
 		AB849A1A29E0A47E00650EC3 /* Final_ProjectUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Final_ProjectUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		AB849A2729E0B2C700650EC3 /* Spins.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Spins.swift; sourceTree = "<group>"; };
+		AB849A2B29E0C4DB00650EC3 /* Energy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Energy.swift; sourceTree = "<group>"; };
+		AB849A2F29E0C67500650EC3 /* Potential.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Potential.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -97,6 +109,9 @@
 			children = (
 				AB8499FC29E0A47D00650EC3 /* Final_ProjectApp.swift */,
 				AB8499FE29E0A47D00650EC3 /* ContentView.swift */,
+				AB849A2729E0B2C700650EC3 /* Spins.swift */,
+				AB849A2B29E0C4DB00650EC3 /* Energy.swift */,
+				AB849A2F29E0C67500650EC3 /* Potential.swift */,
 				AB849A0029E0A47E00650EC3 /* Assets.xcassets */,
 				AB849A0529E0A47E00650EC3 /* Final_Project.entitlements */,
 				AB849A0229E0A47E00650EC3 /* Preview Content */,
@@ -259,6 +274,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AB849A2829E0B2C700650EC3 /* Spins.swift in Sources */,
+				AB849A3029E0C67500650EC3 /* Potential.swift in Sources */,
+				AB849A2C29E0C4DB00650EC3 /* Energy.swift in Sources */,
 				AB8499FF29E0A47D00650EC3 /* ContentView.swift in Sources */,
 				AB8499FD29E0A47D00650EC3 /* Final_ProjectApp.swift in Sources */,
 			);
@@ -269,6 +287,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				AB849A0F29E0A47E00650EC3 /* Final_ProjectTests.swift in Sources */,
+				AB849A2D29E0C4DB00650EC3 /* Energy.swift in Sources */,
+				AB849A3129E0C67500650EC3 /* Potential.swift in Sources */,
+				AB849A2929E0B2C700650EC3 /* Spins.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -276,6 +297,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AB849A2A29E0B2C700650EC3 /* Spins.swift in Sources */,
+				AB849A3229E0C67500650EC3 /* Potential.swift in Sources */,
+				AB849A2E29E0C4DB00650EC3 /* Energy.swift in Sources */,
 				AB849A1929E0A47E00650EC3 /* Final_ProjectUITests.swift in Sources */,
 				AB849A1B29E0A47E00650EC3 /* Final_ProjectUITestsLaunchTests.swift in Sources */,
 			);
