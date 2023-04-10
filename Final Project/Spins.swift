@@ -11,4 +11,6 @@ class Spins: ObservableObject {
     
     @Published var arbitrarySpinConfiguration: [[Double]] = []
     @Published var trialSpinConfiguration: [[Double]] = []
+    @Published var spinConfiguration: [[Double]] = []
+    @Published var timeComponent: [[Double]] = []
 }
