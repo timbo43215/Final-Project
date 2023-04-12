@@ -14,11 +14,11 @@ struct ContentView: View {
     @State var spinArray: [Double] = []
     @State var nextSpinArray: [Double] = []
     @State var timeArray: [Double] = []
-    @State var N: String = "10.0"
+    @State var N: String = "2.0"
     @State var J: String = "1.0"
     @State var g: String = "1.0"
     @State var B: String = "0.0"
-    @State var T: String = "0.0"
+    @State var T: String = "1.0"
     @State var potentialArray: [Double] = []
     @State var trialEnergy: Double = 0.0
     @State var energy: Double = 0.0
@@ -29,28 +29,36 @@ struct ContentView: View {
     var body: some View {
         VStack {
             TextField("N:", text: $N)
-            Button(action: {
-                self.calculateColdSpinConfiguration1D()
-            }) {
-                Text("Calculate Cold Spin Configuration")
-            }
-            Button(action: {
-                self.calculateTrialSpinConfiguration1D()
-            }) {
-                Text("Calculate Trial Configuration")
-            }
-            Button(action: {
-                self.calculateEnergyOfTrialConfiguration1D()
-            }) {
-                Text("Calculate Energy of Trial Configuration")
-            }
+            //            Button(action: {
+            //                self.calculateColdSpinConfiguration1D(x: x)
+            //            }) {
+            //                Text("Calculate Cold Spin Configuration")
+            //            }
+            //            Button(action: {
+            //                self.calculateTrialSpinConfiguration1D()
+            //            }) {
+            //                Text("Calculate Trial Configuration")
+            //            }
+            //            Button(action: {
+            //                self.calculateEnergyOfTrialConfiguration1D()
+            //            }) {
+            //                Text("Calculate Energy of Trial Configuration")
+            //            }
             Button(action: {
                 self.calculateMetropolisAlgorithm1D()
+                self.clearParameters ()
             }) {
                 Text("Calculate Spin Configuration")
             }
         }
         
+    }
+    
+    func clearParameters () {
+        myEnergy.energy1D = []
+        mySpins.spinConfiguration = []
+        spinArray = []
+        nextSpinArray = []
     }
     
     /// 1. Start with an arbitrary spin configuration α(k) = {s1, s2,...,sN }.
@@ -73,16 +81,17 @@ struct ContentView: View {
     }
     /// 1. Start with an arbitrary spin configuration α(k) = {s1, s2,...,sN }.
     func calculateColdSpinConfiguration1D () {
-        spinArray = []
+        mySpins.spinConfiguration = []
         let N = Double(N)!
         let upperLimit = pow(2.0, N)
         let upperLimitInteger = Int(upperLimit)
+        var spinValue: [Double] = []
         
-        for x in 1...upperLimitInteger {
-            let spinValue = upOrDown[0]
-            spinArray.append(spinValue)
+        for i in 1...(upperLimitInteger) {
+            spinValue.append(0.5)
         }
-        print(spinArray)
+        mySpins.spinConfiguration.append(spinValue)
+        print(mySpins.spinConfiguration[0])
     }
     /// 1. Start with an arbitrary spin configuration α(k) = {s1, s2,...,sN }.
     func calculateArbitrarySpinConfiguration1D () {
@@ -102,120 +111,154 @@ struct ContentView: View {
     ///     b. flipping its spin.1
     /// Takes the arbitrary spin configuration created in calculateArbitrarySpinConfiguration1D or calculateColdSpinConfiguration1D and copies it.
     /// Then it takes the value of a random particle in the spin configuration and flips its spin.
-    func calculateTrialSpinConfiguration1D () {
-        nextSpinArray = spinArray
+    func calculateTrialSpinConfiguration1D (x: Int) {
         let N = Double(N)!
         let upperLimit = pow(2.0, N)
         let upperLimitInteger = Int(upperLimit)
         let randParticle1D = Int.random(in: 0...(upperLimitInteger - 1))
-        if (nextSpinArray[randParticle1D] == 0.5) {
-            nextSpinArray[randParticle1D] = -0.5
+        if (x > 1) {
+            mySpins.spinConfiguration.append(mySpins.spinConfiguration[x-2])
+            if (mySpins.spinConfiguration[x-1][randParticle1D] == 0.5) {
+                mySpins.spinConfiguration[x-1][randParticle1D] = -0.5
+            }
+            else {
+                mySpins.spinConfiguration[x-1][randParticle1D] = 0.5
+            }
+           // print(mySpins.spinConfiguration[x-1])
+        }
+        else {}
+    }
+    func calculateEnergyOfTrialConfiguration1D (x: Int) {
+        let N = Double(N)!
+        let upperLimit = pow(2.0, N)
+        let upperLimitInteger = Int(upperLimit)
+        
+        let J = Double(J)!
+        let eValue = 2.7182818284590452353602874713
+        // hbarc in eV*Angstroms
+        let hbarc = 1973.269804
+        // mass of electron in eVc^2
+        let m = 510998.95000
+        let g = Double(g)!
+        let bohrMagneton = (eValue*hbarc)/(2.0*m)
+        let B = Double(B)!
+        if (x > 1) {
+            for i in 1...(upperLimitInteger - 1) {
+                let trialEnergyValue = -J*(mySpins.spinConfiguration[x-1][i-1]*mySpins.spinConfiguration[x-1][i]) - (B*bohrMagneton*mySpins.spinConfiguration[x-1][i])
+                trialEnergy = trialEnergy + trialEnergyValue
+            }
         }
         else {
-            nextSpinArray[randParticle1D] = 0.5
+            for i in 1...(upperLimitInteger - 1) {
+                let trialEnergyValue = -J*(mySpins.spinConfiguration[0][i-1]*mySpins.spinConfiguration[0][i]) - (B*bohrMagneton*mySpins.spinConfiguration[0][i])
+                trialEnergy = trialEnergy + trialEnergyValue
+            }
+            //        print(trialEnergy)
         }
-        print(nextSpinArray)
-    }
-    func calculateEnergyOfTrialConfiguration1D () {
-        let N = Double(N)!
-        let upperLimit = pow(2.0, N)
-        let upperLimitInteger = Int(upperLimit)
-        
-        let J = Double(J)!
-        let eValue = 2.7182818284590452353602874713
-        // hbarc in eV*Angstroms
-        let hbarc = 1973.269804
-        // mass of electron in eVc^2
-        let m = 510998.95000
-        let g = Double(g)!
-        let bohrMagneton = (eValue*hbarc)/(2.0*m)
-        let B = Double(B)!
-        
-        for x in 1...(upperLimitInteger - 1) {
-            let trialEnergyValue = -J*(nextSpinArray[x-1]*nextSpinArray[x]) - (B*bohrMagneton*nextSpinArray[x])
-            trialEnergy = trialEnergy + trialEnergyValue
-        }
-        print(trialEnergy)
     }
     
-    func calculateEnergyOfPreviousConfiguration1D () {
-        let N = Double(N)!
-        let upperLimit = pow(2.0, N)
-        let upperLimitInteger = Int(upperLimit)
-        
-        let J = Double(J)!
-        let eValue = 2.7182818284590452353602874713
-        // hbarc in eV*Angstroms
-        let hbarc = 1973.269804
-        // mass of electron in eVc^2
-        let m = 510998.95000
-        let g = Double(g)!
-        let bohrMagneton = (eValue*hbarc)/(2.0*m)
-        let B = Double(B)!
-        
-        for x in 1...(upperLimitInteger - 1) {
-            let energyValue = -J*(spinArray[x-1]*spinArray[x]) - (B*bohrMagneton*spinArray[x])
-            energy = energy + energyValue
+        func calculateEnergyOfPreviousConfiguration1D (x:Int) {
+            let N = Double(N)!
+            let upperLimit = pow(2.0, N)
+            let upperLimitInteger = Int(upperLimit)
+            
+            let J = Double(J)!
+            let eValue = 2.7182818284590452353602874713
+            // hbarc in eV*Angstroms
+            let hbarc = 1973.269804
+            // mass of electron in eVc^2
+            let m = 510998.95000
+            let g = Double(g)!
+            let bohrMagneton = (eValue*hbarc)/(2.0*m)
+            let B = Double(B)!
+            
+            if (x > 1) {
+                for i in 1...(upperLimitInteger - 1) {
+                    let energyValue = -J*(mySpins.spinConfiguration[x-2][i]*mySpins.spinConfiguration[x-2][i]) - (B*bohrMagneton*mySpins.spinConfiguration[x-2][i])
+                    energy = energy + energyValue
+                }
+            }
+            else {
+                for i in 1...(upperLimitInteger - 1) {
+                    let energyValue = -J*(mySpins.spinConfiguration[0][i]*mySpins.spinConfiguration[0][i]) - (B*bohrMagneton*mySpins.spinConfiguration[0][i])
+                    energy = energy + energyValue
+                }
+            }
+            //        print(energy)
         }
-        print(energy)
-    }
-        func calculateEnergyCheck () {
+        func calculateEnergyCheck (x: Int) {
             let uniformRandomNumber = Double.random(in: 0...1)
-                if (abs(trialEnergy) <= abs(energy)) {
-                    nextSpinArray = nextSpinArray
+            if (x > 1) {
+                if (trialEnergy <= energy) {
+                    myEnergy.energy1D.append(trialEnergy)
                     print("Trial Accepted")
+                    print(mySpins.spinConfiguration[x-1])
                 }
                 else {
                     if (calculateRelativeProbability() >= uniformRandomNumber){
-                        nextSpinArray = nextSpinArray
+                        myEnergy.energy1D.append(trialEnergy)
+                        
                         print("Trial Accepted")
+                        print(mySpins.spinConfiguration[x-1])
                     }
                     else {
-                        nextSpinArray = spinArray
+                        mySpins.spinConfiguration[x-1] = mySpins.spinConfiguration[x-2]
+                        myEnergy.energy1D.append(energy)
+                        
                         print("Trial Rejected")
+                        print(mySpins.spinConfiguration[x-1])
                     }
                 }
+            }
+            else {}
         }
-    /// This calculates the relative probability from Equation 15.13 on page 395 in Landau.
-    ///  R = exp(-deltaE/kT), where k is the boltzmann constant, T is temperature in Kelvin, and
-    ///  deltaE = E(trial) - E(previous)
-    func calculateRelativeProbability () -> Double {
+        /// This calculates the relative probability from Equation 15.13 on page 395 in Landau.
+        ///  R = exp(-deltaE/kT), where k is the boltzmann constant, T is temperature in Kelvin, and
+        ///  deltaE = E(trial) - E(previous)
+        func calculateRelativeProbability () -> Double {
             
             let deltaE = trialEnergy - energy
             // units =  m2 kg s-2 K-1
             let k = 1.380649*pow(10.0, -23.0)
             let T = Double(T)!
-            let kT = k*T
+            let kT = 1.0
             var R = 0.0
-                    R = exp(-deltaE/(kT))
-                        
+            R = exp(-deltaE/(kT))
+          //print(R)
+            
             return R
+        }
+        /// U
+        func calculateInternalEnergy1D () {
             
         }
-    
-    func calculateMetropolisAlgorithm1D () {
-        let N = Double(N)!
-        let upperLimit = pow(2.0, N)
-        let upperLimitInteger = Int(upperLimit)
-        var count = [0.0]
-        var timeValue = 0.0
         
-        for y in 0...(upperLimitInteger) {
-            for x in 0...(upperLimitInteger) {
-                calculateColdSpinConfiguration1D ()
-                calculateTrialSpinConfiguration1D()
-                calculateEnergyOfTrialConfiguration1D()
-                calculateEnergyOfPreviousConfiguration1D()
-                calculateEnergyCheck()
+        func calculateMetropolisAlgorithm1D () {
+            let N = Double(N)!
+            let upperLimit = pow(2.0, N)
+            let upperLimitInteger = Int(upperLimit)
+            var count: [Double] = []
+            var timeValue = 0.0
+            calculateColdSpinConfiguration1D ()
+            for y in 0...(upperLimitInteger) {
+                for x in 1...(upperLimitInteger) {
+                    calculateTrialSpinConfiguration1D(x: x)
+                    calculateEnergyOfTrialConfiguration1D(x: x)
+                    calculateEnergyOfPreviousConfiguration1D(x: x)
+                    calculateEnergyCheck(x: x)
+                    trialEnergy = 0.0
+                    energy = 0.0
+                }
+                timeValue = Double(y-1) + 1.0
+                count.append(timeValue)
+                mySpins.timeComponent.append(count)
+                mySpins.spinConfiguration.append(mySpins.spinConfiguration[y])
             }
-            timeValue = Double(y-1) + 1.0
-            count.append(timeValue)
-            mySpins.timeComponent.append(count)
-            mySpins.spinConfiguration.append(nextSpinArray)
+            print(mySpins.spinConfiguration.count)
+            print(mySpins.spinConfiguration)
+            print(mySpins.timeComponent)
+            print(myEnergy.energy1D)
         }
-        print(mySpins.spinConfiguration)
-        print(mySpins.timeComponent)
-    }
         
         /// 2. Generate a trial configuration α(k+1) by
         ///     a. picking a particle i randomly and
@@ -268,84 +311,84 @@ struct ContentView: View {
                 }
                 totalTotalEnergy = totalTotalEnergy + energy
             }
-            finalEnergy = -J*totalTotalEnergy
+            finalEnergy = Double(-J)*totalTotalEnergy
             print(finalEnergy)
         }
+}
     
-    func setObjectWillChange(theObject:PlotClass){
-        
-        theObject.objectWillChange.send()
-        
-    }
+//    func setObjectWillChange(theObject:PlotClass){
+//
+//        theObject.objectWillChange.send()
+//
+//    }
     
-    func plot(selectedGraphIndex: Int) {
-        
-        setObjectWillChange(theObject: self.plotData)
-        myCalculatePlotData.plotDataModel = self.plotData.plotArray[0]
-        
-        switch  selectedGraphIndex {
-            
-        case 0:
-            
-            myCalculatePlotData.theText = "Potential\n"
-            
-            myCalculatePlotData.setThePlotParameters(color: "Blue", xLabel: "x", yLabel: "Potential", title: "Potential")
-            
-  //          myCalculatePlotData.resetCalculatedTextOnMainThread()
-            
-            
-            var thePlotData :[(x: Double, y: Double)] =  []
-            
-            for i in 0..<myPotentials.x.count {
-                let X = myPotentials.x[i]
-                var Y = myPotentials.Potential[i]
-                if Y > 100 {
-                    Y = 100
-                }
-                thePlotData.append((x: X, y: Y))
-            }
-            myCalculatePlotData.appendDataToPlot(plotData: thePlotData)
-            
-            myCalculatePlotData.plotDataModel!.changingPlotParameters.xMax = myPotentials.x.max()! + 2.0
-            
-            myCalculatePlotData.plotDataModel!.changingPlotParameters.xMin = myPotentials.x.min()! - 2.0
-            
-            myCalculatePlotData.plotDataModel!.changingPlotParameters.yMax = 55.0
-            
-            myCalculatePlotData.plotDataModel!.changingPlotParameters.yMin = myPotentials.Potential.min()! - 2.0
-            
-            setObjectWillChange(theObject: self.plotData)
-            
-        case 1:
-            
-            myCalculatePlotData.theText = "Functional\n"
-            
-            myCalculatePlotData.setThePlotParameters(color: "Blue", xLabel: "x", yLabel: "Functional", title: "Fuctional")
-            
-   //         myCalculatePlotData.resetCalculatedTextOnMainThread()
-            
-            
-            var thePlotData :[(x: Double, y: Double)] =  []
-            
-            for i in 0..<myFunctionals.Energy.count {
-                let X = myFunctionals.Energy[i]
-                var Y = myFunctionals.Functional[i]
-                if Y > 100 {
-                    Y = 100
-                }
-                else if Y < -100 {
-                    
-                    Y = -100
-                    
-                }
-                thePlotData.append((x: X, y: Y))
-            }
-
-    
-    }
-
-// func randomElement() -> Self.Element?
-
+    //    func plot(selectedGraphIndex: Int) {
+    //
+    //        setObjectWillChange(theObject: self.plotData)
+    //        myCalculatePlotData.plotDataModel = self.plotData.plotArray[0]
+    //
+    //        switch  selectedGraphIndex {
+    //
+    //        case 0:
+    //
+    //            myCalculatePlotData.theText = "Potential\n"
+    //
+    //            myCalculatePlotData.setThePlotParameters(color: "Blue", xLabel: "x", yLabel: "Potential", title: "Potential")
+    //
+    //            //          myCalculatePlotData.resetCalculatedTextOnMainThread()
+    //
+    //
+    //            var thePlotData :[(x: Double, y: Double)] =  []
+    //
+    //            for i in 0..<myPotentials.x.count {
+    //                let X = myPotentials.x[i]
+    //                var Y = myPotentials.Potential[i]
+    //                if Y > 100 {
+    //                    Y = 100
+    //                }
+    //                thePlotData.append((x: X, y: Y))
+    //            }
+    //            myCalculatePlotData.appendDataToPlot(plotData: thePlotData)
+    //
+    //            myCalculatePlotData.plotDataModel!.changingPlotParameters.xMax = myPotentials.x.max()! + 2.0
+    //
+    //            myCalculatePlotData.plotDataModel!.changingPlotParameters.xMin = myPotentials.x.min()! - 2.0
+    //
+    //            myCalculatePlotData.plotDataModel!.changingPlotParameters.yMax = 55.0
+    //
+    //            myCalculatePlotData.plotDataModel!.changingPlotParameters.yMin = myPotentials.Potential.min()! - 2.0
+    //
+    //            setObjectWillChange(theObject: self.plotData)
+    //
+    //        case 1:
+    //
+    //            myCalculatePlotData.theText = "Functional\n"
+    //
+    //            myCalculatePlotData.setThePlotParameters(color: "Blue", xLabel: "x", yLabel: "Functional", title: "Fuctional")
+    //
+    //            //         myCalculatePlotData.resetCalculatedTextOnMainThread()
+    //
+    //
+    //            var thePlotData :[(x: Double, y: Double)] =  []
+    //
+    //            for i in 0..<myFunctionals.Energy.count {
+    //                let X = myFunctionals.Energy[i]
+    //                var Y = myFunctionals.Functional[i]
+    //                if Y > 100 {
+    //                    Y = 100
+    //                }
+    //                else if Y < -100 {
+    //
+    //                    Y = -100
+    //
+    //                }
+    //                thePlotData.append((x: X, y: Y))
+    //            }
+    //
+    //
+    //        }
+    //    }
+    // func randomElement() -> Self.Element?
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()

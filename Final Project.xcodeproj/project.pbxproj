@@ -7,18 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		AB092B3029E48B4D00446C01 /* CalculatePlotData.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB092B2F29E48B4D00446C01 /* CalculatePlotData.swift */; };
-		AB092B3129E48B4D00446C01 /* CalculatePlotData.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB092B2F29E48B4D00446C01 /* CalculatePlotData.swift */; };
-		AB092B3229E48B4D00446C01 /* CalculatePlotData.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB092B2F29E48B4D00446C01 /* CalculatePlotData.swift */; };
-		AB092B3429E48BAA00446C01 /* PlotDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB092B3329E48BAA00446C01 /* PlotDataClass.swift */; };
-		AB092B3529E48BAA00446C01 /* PlotDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB092B3329E48BAA00446C01 /* PlotDataClass.swift */; };
-		AB092B3629E48BAA00446C01 /* PlotDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB092B3329E48BAA00446C01 /* PlotDataClass.swift */; };
-		AB092B3829E48BB200446C01 /* PlotClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB092B3729E48BB200446C01 /* PlotClass.swift */; };
-		AB092B3929E48BB200446C01 /* PlotClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB092B3729E48BB200446C01 /* PlotClass.swift */; };
-		AB092B3A29E48BB200446C01 /* PlotClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB092B3729E48BB200446C01 /* PlotClass.swift */; };
-		AB092B3C29E48BC300446C01 /* PlotDataStruct.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB092B3B29E48BC300446C01 /* PlotDataStruct.swift */; };
-		AB092B3D29E48BC300446C01 /* PlotDataStruct.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB092B3B29E48BC300446C01 /* PlotDataStruct.swift */; };
-		AB092B3E29E48BC300446C01 /* PlotDataStruct.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB092B3B29E48BC300446C01 /* PlotDataStruct.swift */; };
 		AB8499FD29E0A47D00650EC3 /* Final_ProjectApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB8499FC29E0A47D00650EC3 /* Final_ProjectApp.swift */; };
 		AB8499FF29E0A47D00650EC3 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB8499FE29E0A47D00650EC3 /* ContentView.swift */; };
 		AB849A0129E0A47E00650EC3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AB849A0029E0A47E00650EC3 /* Assets.xcassets */; };
@@ -55,10 +43,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		AB092B2F29E48B4D00446C01 /* CalculatePlotData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CalculatePlotData.swift; sourceTree = "<group>"; };
-		AB092B3329E48BAA00446C01 /* PlotDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlotDataClass.swift; sourceTree = "<group>"; };
-		AB092B3729E48BB200446C01 /* PlotClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlotClass.swift; sourceTree = "<group>"; };
-		AB092B3B29E48BC300446C01 /* PlotDataStruct.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlotDataStruct.swift; sourceTree = "<group>"; };
 		AB8499F929E0A47D00650EC3 /* Final Project.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Final Project.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		AB8499FC29E0A47D00650EC3 /* Final_ProjectApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Final_ProjectApp.swift; sourceTree = "<group>"; };
 		AB8499FE29E0A47D00650EC3 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -128,10 +112,6 @@
 				AB849A2729E0B2C700650EC3 /* Spins.swift */,
 				AB849A2B29E0C4DB00650EC3 /* Energy.swift */,
 				AB849A2F29E0C67500650EC3 /* Potential.swift */,
-				AB092B2F29E48B4D00446C01 /* CalculatePlotData.swift */,
-				AB092B3729E48BB200446C01 /* PlotClass.swift */,
-				AB092B3329E48BAA00446C01 /* PlotDataClass.swift */,
-				AB092B3B29E48BC300446C01 /* PlotDataStruct.swift */,
 				AB849A0029E0A47E00650EC3 /* Assets.xcassets */,
 				AB849A0529E0A47E00650EC3 /* Final_Project.entitlements */,
 				AB849A0229E0A47E00650EC3 /* Preview Content */,
@@ -295,14 +275,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				AB849A2829E0B2C700650EC3 /* Spins.swift in Sources */,
-				AB092B3029E48B4D00446C01 /* CalculatePlotData.swift in Sources */,
 				AB849A3029E0C67500650EC3 /* Potential.swift in Sources */,
-				AB092B3C29E48BC300446C01 /* PlotDataStruct.swift in Sources */,
 				AB849A2C29E0C4DB00650EC3 /* Energy.swift in Sources */,
-				AB092B3429E48BAA00446C01 /* PlotDataClass.swift in Sources */,
 				AB8499FF29E0A47D00650EC3 /* ContentView.swift in Sources */,
 				AB8499FD29E0A47D00650EC3 /* Final_ProjectApp.swift in Sources */,
-				AB092B3829E48BB200446C01 /* PlotClass.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -311,12 +287,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				AB849A0F29E0A47E00650EC3 /* Final_ProjectTests.swift in Sources */,
-				AB092B3929E48BB200446C01 /* PlotClass.swift in Sources */,
-				AB092B3529E48BAA00446C01 /* PlotDataClass.swift in Sources */,
 				AB849A2D29E0C4DB00650EC3 /* Energy.swift in Sources */,
 				AB849A3129E0C67500650EC3 /* Potential.swift in Sources */,
-				AB092B3D29E48BC300446C01 /* PlotDataStruct.swift in Sources */,
-				AB092B3129E48B4D00446C01 /* CalculatePlotData.swift in Sources */,
 				AB849A2929E0B2C700650EC3 /* Spins.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -326,14 +298,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				AB849A2A29E0B2C700650EC3 /* Spins.swift in Sources */,
-				AB092B3229E48B4D00446C01 /* CalculatePlotData.swift in Sources */,
 				AB849A3229E0C67500650EC3 /* Potential.swift in Sources */,
-				AB092B3E29E48BC300446C01 /* PlotDataStruct.swift in Sources */,
 				AB849A2E29E0C4DB00650EC3 /* Energy.swift in Sources */,
-				AB092B3629E48BAA00446C01 /* PlotDataClass.swift in Sources */,
 				AB849A1929E0A47E00650EC3 /* Final_ProjectUITests.swift in Sources */,
 				AB849A1B29E0A47E00650EC3 /* Final_ProjectUITestsLaunchTests.swift in Sources */,
-				AB092B3A29E48BB200446C01 /* PlotClass.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
