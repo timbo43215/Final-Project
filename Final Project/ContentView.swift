@@ -111,27 +111,30 @@ struct ContentView: View {
     ///     b. flipping its spin.1
     /// Takes the arbitrary spin configuration created in calculateArbitrarySpinConfiguration1D or calculateColdSpinConfiguration1D and copies it.
     /// Then it takes the value of a random particle in the spin configuration and flips its spin.
-    func calculateTrialSpinConfiguration1D (x: Int) {
+    func calculateTrialSpinConfiguration1D (x: Int) -> [Double] {
         let N = Double(N)!
         let upperLimit = pow(2.0, N)
         let upperLimitInteger = Int(upperLimit)
         let randParticle1D = Int.random(in: 0...(upperLimitInteger - 1))
-        if (x > 1) {
-            mySpins.spinConfiguration.append(mySpins.spinConfiguration[x-2])
-            if (mySpins.spinConfiguration[x-1][randParticle1D] == 0.5) {
-                mySpins.spinConfiguration[x-1][randParticle1D] = -0.5
+        var trialSpins = mySpins.spinConfiguration[x-1]
+        
+        if (x > 0) {
+            if (trialSpins[randParticle1D] == 0.5) {
+                
+                trialSpins[randParticle1D] = -0.5
             }
             else {
-                mySpins.spinConfiguration[x-1][randParticle1D] = 0.5
+                trialSpins[randParticle1D] = 0.5
             }
            // print(mySpins.spinConfiguration[x-1])
         }
-        else {}
+        return trialSpins
     }
-    func calculateEnergyOfTrialConfiguration1D (x: Int) {
+    func calculateEnergyOfTrialConfiguration1D (x: Int, trialSpins: [Double]) {
         let N = Double(N)!
         let upperLimit = pow(2.0, N)
         let upperLimitInteger = Int(upperLimit)
+        trialEnergy = 0.0
         
         let J = Double(J)!
         let eValue = 2.7182818284590452353602874713
@@ -142,67 +145,57 @@ struct ContentView: View {
         let g = Double(g)!
         let bohrMagneton = (eValue*hbarc)/(2.0*m)
         let B = Double(B)!
-        if (x > 1) {
+        if (x > 0) {
             for i in 1...(upperLimitInteger - 1) {
-                let trialEnergyValue = -J*(mySpins.spinConfiguration[x-1][i-1]*mySpins.spinConfiguration[x-1][i]) - (B*bohrMagneton*mySpins.spinConfiguration[x-1][i])
+                let trialEnergyValue = -J*(trialSpins[i-1]*trialSpins[i]) - (B*bohrMagneton*trialSpins[i])
                 trialEnergy = trialEnergy + trialEnergyValue
             }
-        }
-        else {
-            for i in 1...(upperLimitInteger - 1) {
-                let trialEnergyValue = -J*(mySpins.spinConfiguration[0][i-1]*mySpins.spinConfiguration[0][i]) - (B*bohrMagneton*mySpins.spinConfiguration[0][i])
-                trialEnergy = trialEnergy + trialEnergyValue
-            }
-            //        print(trialEnergy)
         }
     }
     
-        func calculateEnergyOfPreviousConfiguration1D (x:Int) {
-            let N = Double(N)!
-            let upperLimit = pow(2.0, N)
-            let upperLimitInteger = Int(upperLimit)
-            
-            let J = Double(J)!
-            let eValue = 2.7182818284590452353602874713
-            // hbarc in eV*Angstroms
-            let hbarc = 1973.269804
-            // mass of electron in eVc^2
-            let m = 510998.95000
-            let g = Double(g)!
-            let bohrMagneton = (eValue*hbarc)/(2.0*m)
-            let B = Double(B)!
-            
-            if (x > 1) {
-                for i in 1...(upperLimitInteger - 1) {
-                    let energyValue = -J*(mySpins.spinConfiguration[x-2][i]*mySpins.spinConfiguration[x-2][i]) - (B*bohrMagneton*mySpins.spinConfiguration[x-2][i])
-                    energy = energy + energyValue
-                }
+    func calculateEnergyOfPreviousConfiguration1D (x:Int) {
+        let N = Double(N)!
+        let upperLimit = pow(2.0, N)
+        let upperLimitInteger = Int(upperLimit)
+        energy = 0.0
+        
+        let J = Double(J)!
+        let eValue = 2.7182818284590452353602874713
+        // hbarc in eV*Angstroms
+        let hbarc = 1973.269804
+        // mass of electron in eVc^2
+        let m = 510998.95000
+        let g = Double(g)!
+        let bohrMagneton = (eValue*hbarc)/(2.0*m)
+        let B = Double(B)!
+        
+        if (x > 0) {
+            for i in 1...(upperLimitInteger - 1) {
+                let energyValue = -J*(mySpins.spinConfiguration[x-1][i]*mySpins.spinConfiguration[x-1][i]) - (B*bohrMagneton*mySpins.spinConfiguration[x-1][i])
+                energy = energy + energyValue
             }
-            else {
-                for i in 1...(upperLimitInteger - 1) {
-                    let energyValue = -J*(mySpins.spinConfiguration[0][i]*mySpins.spinConfiguration[0][i]) - (B*bohrMagneton*mySpins.spinConfiguration[0][i])
-                    energy = energy + energyValue
-                }
-            }
-            //        print(energy)
         }
-        func calculateEnergyCheck (x: Int) {
+        print(energy)
+    }
+        func calculateEnergyCheck (x: Int, trialSpins: [Double]) {
             let uniformRandomNumber = Double.random(in: 0...1)
-            if (x > 1) {
+            if (x > 0) {
                 if (trialEnergy <= energy) {
+                    mySpins.spinConfiguration.append(trialSpins)
                     myEnergy.energy1D.append(trialEnergy)
                     print("Trial Accepted")
                     print(mySpins.spinConfiguration[x-1])
                 }
                 else {
                     if (calculateRelativeProbability() >= uniformRandomNumber){
+                        mySpins.spinConfiguration.append(trialSpins)
                         myEnergy.energy1D.append(trialEnergy)
-                        
                         print("Trial Accepted")
                         print(mySpins.spinConfiguration[x-1])
                     }
                     else {
-                        mySpins.spinConfiguration[x-1] = mySpins.spinConfiguration[x-2]
+                        //mySpins.spinConfiguration.removeLast()
+                        mySpins.spinConfiguration.append(mySpins.spinConfiguration.last!)
                         myEnergy.energy1D.append(energy)
                         
                         print("Trial Rejected")
@@ -242,17 +235,17 @@ struct ContentView: View {
             calculateColdSpinConfiguration1D ()
             for y in 0...(upperLimitInteger) {
                 for x in 1...(upperLimitInteger) {
-                    calculateTrialSpinConfiguration1D(x: x)
-                    calculateEnergyOfTrialConfiguration1D(x: x)
+                    var trialSpins = calculateTrialSpinConfiguration1D(x: x)
+                    calculateEnergyOfTrialConfiguration1D(x: x, trialSpins: trialSpins)
                     calculateEnergyOfPreviousConfiguration1D(x: x)
-                    calculateEnergyCheck(x: x)
-                    trialEnergy = 0.0
-                    energy = 0.0
+                    calculateEnergyCheck(x: x, trialSpins: trialSpins)
+                    //trialEnergy = 0.0
+                    //energy = 0.0
                 }
                 timeValue = Double(y-1) + 1.0
-                count.append(timeValue)
-                mySpins.timeComponent.append(count)
-                mySpins.spinConfiguration.append(mySpins.spinConfiguration[y])
+              //  count.append(timeValue)
+              //  mySpins.timeComponent.append(count)
+             //   mySpins.spinConfiguration.append(mySpins.spinConfiguration[y])
             }
             print(mySpins.spinConfiguration.count)
             print(mySpins.spinConfiguration)
