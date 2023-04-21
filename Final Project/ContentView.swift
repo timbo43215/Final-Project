@@ -18,40 +18,71 @@ struct ContentView: View {
     @State var J: String = "1.0"
     @State var g: String = "1.0"
     @State var B: String = "0.0"
-    @State var T: String = "1.0"
+    @State var kT: String = "1.0"
     @State var potentialArray: [Double] = []
     @State var trialEnergy: Double = 0.0
     @State var energy: Double = 0.0
     @StateObject var mySpins = Spins()
     @StateObject var myEnergy = Energy()
     @StateObject var myPotential = Potential()
+    @StateObject private var twoDMagnet = TwoDMagnet()
+    let upColor = Color(red: 0.25, green: 0.5, blue: 0.75)
+    let downColor = Color(red: 0.75, green: 0.5, blue: 0.25)
     
     var body: some View {
-        VStack {
-            TextField("N:", text: $N)
-            //            Button(action: {
-            //                self.calculateColdSpinConfiguration1D(x: x)
-            //            }) {
-            //                Text("Calculate Cold Spin Configuration")
-            //            }
-            //            Button(action: {
-            //                self.calculateTrialSpinConfiguration1D()
-            //            }) {
-            //                Text("Calculate Trial Configuration")
-            //            }
-            //            Button(action: {
-            //                self.calculateEnergyOfTrialConfiguration1D()
-            //            }) {
-            //                Text("Calculate Energy of Trial Configuration")
-            //            }
-            Button(action: {
-                self.calculateMetropolisAlgorithm1D()
-                self.clearParameters ()
-            }) {
-                Text("Calculate Spin Configuration")
+        HStack {
+            VStack {
+                HStack {
+                    Text("N:")
+                    TextField("N:", text: $N)
+                }
+                HStack {
+                    Text("kT:")
+                    TextField("kT:", text: $kT)
+                }
+//                Button(action: {
+//                    self.calculateColdMetropolisAlgorithm1D()
+//                    self.clearParameters ()})
+//                {Text("Calculate Spin Configuration from Cold Initial")}
+//                Button(action: {
+//                    self.calculateArbitraryMetropolisAlgorithm1D()
+//                    self.clearParameters ()})
+//                {Text("Calculate Spin Configuration from Arbitrary Initial")}
+            }
+            VStack(){
+                TimelineView(.animation) { timeline in
+                    Canvas { context, size in
+                        twoDMagnet.update(to: timeline.date, N: Int(Double(N)!), spinConfiguration: mySpins.spinConfiguration, isThereAnythingInMyVariable: false)
+                        
+                        for spin in twoDMagnet.spins {
+                            let N = Double(N)!
+                            let upperLimit = pow(2.0, N)
+                            let upperLimitInteger = Int(upperLimit)
+                            let rect = CGRect(x: spin.x * (size.width/CGFloat(mySpins.spinConfiguration.count - 1)), y: spin.y * (size.height/CGFloat(upperLimitInteger)), width: (size.height/CGFloat(mySpins.spinConfiguration.count - 1)), height: (size.height/CGFloat(upperLimitInteger)))
+                            let shape = Rectangle().path(in: rect)
+                            if (spin.spin){
+                                context.fill(shape, with: .color(upColor))}
+                            else{
+                                context.fill(shape, with: .color(downColor))
+                            }
+                        }
+                    }
+                }
+                .background(.black)
+                .ignoresSafeArea()
+                .padding()
+                
+                
+                Button("Start", action: setupSpins)
             }
         }
-        
+    }
+    
+    func setupSpins(){
+        let N = Double(N)!
+        self.clearParameters ()
+        self.calculateColdMetropolisAlgorithm1D()
+        twoDMagnet.setup(N: Int(N), spinConfiguration: mySpins.spinConfiguration, isThereAnythingInMyVariable: false)
     }
     
     func clearParameters () {
@@ -95,16 +126,18 @@ struct ContentView: View {
     }
     /// 1. Start with an arbitrary spin configuration α(k) = {s1, s2,...,sN }.
     func calculateArbitrarySpinConfiguration1D () {
-        spinArray = []
+        mySpins.spinConfiguration = []
         let N = Double(N)!
         let upperLimit = pow(2.0, N)
         let upperLimitInteger = Int(upperLimit)
+        var spinValue: [Double] = []
         
-        for x in 1...upperLimitInteger {
+        for i in 1...upperLimitInteger {
             let s = Int.random(in: 0...1)
-            let spinValue = upOrDown[s]
-            spinArray.append(spinValue)
+            spinValue.append(upOrDown[s])
         }
+        mySpins.spinConfiguration.append(spinValue)
+        print(mySpins.spinConfiguration[0])
     }
     /// 2. Generate a trial configuration α(k+1) by
     ///     a. picking a particle i randomly and
@@ -130,13 +163,13 @@ struct ContentView: View {
         }
         return trialSpins
     }
-    func calculateEnergyOfTrialConfiguration1D (x: Int, trialSpins: [Double]) {
+    func calculateEnergyOfTrialConfiguration1D (x: Int, trialSpins: [Double], J: Int) {
         let N = Double(N)!
         let upperLimit = pow(2.0, N)
         let upperLimitInteger = Int(upperLimit)
         trialEnergy = 0.0
         
-        let J = Double(J)!
+        let J = Double(J)
         let eValue = 2.7182818284590452353602874713
         // hbarc in eV*Angstroms
         let hbarc = 1973.269804
@@ -153,19 +186,19 @@ struct ContentView: View {
         }
     }
     
-    func calculateEnergyOfPreviousConfiguration1D (x:Int) {
+    func calculateEnergyOfPreviousConfiguration1D (x:Int, J: Int) {
         let N = Double(N)!
         let upperLimit = pow(2.0, N)
         let upperLimitInteger = Int(upperLimit)
         energy = 0.0
         
-        let J = Double(J)!
+        let J = Double(J)
         let eValue = 2.7182818284590452353602874713
         // hbarc in eV*Angstroms
         let hbarc = 1973.269804
         // mass of electron in eVc^2
         let m = 510998.95000
-        let g = Double(g)!
+        // let g = Double(g)!
         let bohrMagneton = (eValue*hbarc)/(2.0*m)
         let B = Double(B)!
         
@@ -175,23 +208,23 @@ struct ContentView: View {
                 energy = energy + energyValue
             }
         }
-        print(energy)
+       // print(energy)
     }
-        func calculateEnergyCheck (x: Int, trialSpins: [Double]) {
+    func calculateEnergyCheck (x: Int, trialSpins: [Double]) {
             let uniformRandomNumber = Double.random(in: 0...1)
             if (x > 0) {
                 if (trialEnergy <= energy) {
                     mySpins.spinConfiguration.append(trialSpins)
                     myEnergy.energy1D.append(trialEnergy)
                     print("Trial Accepted")
-                    print(mySpins.spinConfiguration[x-1])
+                    print(mySpins.spinConfiguration[x])
                 }
                 else {
                     if (calculateRelativeProbability() >= uniformRandomNumber){
                         mySpins.spinConfiguration.append(trialSpins)
                         myEnergy.energy1D.append(trialEnergy)
                         print("Trial Accepted")
-                        print(mySpins.spinConfiguration[x-1])
+                        print(mySpins.spinConfiguration[x])
                     }
                     else {
                         //mySpins.spinConfiguration.removeLast()
@@ -203,20 +236,17 @@ struct ContentView: View {
                     }
                 }
             }
-            else {}
         }
         /// This calculates the relative probability from Equation 15.13 on page 395 in Landau.
         ///  R = exp(-deltaE/kT), where k is the boltzmann constant, T is temperature in Kelvin, and
         ///  deltaE = E(trial) - E(previous)
-        func calculateRelativeProbability () -> Double {
+    func calculateRelativeProbability () -> Double {
             
             let deltaE = trialEnergy - energy
             // units =  m2 kg s-2 K-1
-            let k = 1.380649*pow(10.0, -23.0)
-            let T = Double(T)!
-            let kT = 1.0
             var R = 0.0
-            R = exp(-deltaE/(kT))
+            let kTDouble = Double(kT)!
+            R = exp(-deltaE/(kTDouble))
           //print(R)
             
             return R
@@ -225,19 +255,48 @@ struct ContentView: View {
         func calculateInternalEnergy1D () {
             
         }
-        
-        func calculateMetropolisAlgorithm1D () {
+        // 15.4.1 Metropolis Algorithm Implementation
+    func calculateColdMetropolisAlgorithm1D () {
+            let J: Int = 1
             let N = Double(N)!
             let upperLimit = pow(2.0, N)
             let upperLimitInteger = Int(upperLimit)
             var count: [Double] = []
             var timeValue = 0.0
             calculateColdSpinConfiguration1D ()
-            for y in 0...(upperLimitInteger) {
+          //  for y in 0...(upperLimitInteger - 1) {
                 for x in 1...(upperLimitInteger) {
                     var trialSpins = calculateTrialSpinConfiguration1D(x: x)
-                    calculateEnergyOfTrialConfiguration1D(x: x, trialSpins: trialSpins)
-                    calculateEnergyOfPreviousConfiguration1D(x: x)
+                    calculateEnergyOfTrialConfiguration1D(x: x, trialSpins: trialSpins, J: J)
+                    calculateEnergyOfPreviousConfiguration1D(x: x, J: J)
+                    calculateEnergyCheck(x: x, trialSpins: trialSpins)
+                    //trialEnergy = 0.0
+                    //energy = 0.0
+                }
+            //0    timeValue = Double(y-1) + 1.0
+              //  count.append(timeValue)
+              //  mySpins.timeComponent.append(count)
+             //   mySpins.spinConfiguration.append(mySpins.spinConfiguration[y])
+           // }
+            print(mySpins.spinConfiguration.count)
+            print(mySpins.spinConfiguration)
+            print(mySpins.timeComponent)
+            print(myEnergy.energy1D)
+        
+        }
+    func calculateArbitraryMetropolisAlgorithm1D () {
+            let J: Int = 1
+            let N = Double(N)!
+            let upperLimit = pow(2.0, N)
+            let upperLimitInteger = Int(upperLimit)
+            var count: [Double] = []
+            var timeValue = 0.0
+            calculateArbitrarySpinConfiguration1D ()
+            for y in 0...(upperLimitInteger - 1) {
+                for x in 1...(upperLimitInteger) {
+                    var trialSpins = calculateTrialSpinConfiguration1D(x: x)
+                    calculateEnergyOfTrialConfiguration1D(x: x, trialSpins: trialSpins, J: J)
+                    calculateEnergyOfPreviousConfiguration1D(x: x, J: J)
                     calculateEnergyCheck(x: x, trialSpins: trialSpins)
                     //trialEnergy = 0.0
                     //energy = 0.0
@@ -308,80 +367,8 @@ struct ContentView: View {
             print(finalEnergy)
         }
 }
+
     
-//    func setObjectWillChange(theObject:PlotClass){
-//
-//        theObject.objectWillChange.send()
-//
-//    }
-    
-    //    func plot(selectedGraphIndex: Int) {
-    //
-    //        setObjectWillChange(theObject: self.plotData)
-    //        myCalculatePlotData.plotDataModel = self.plotData.plotArray[0]
-    //
-    //        switch  selectedGraphIndex {
-    //
-    //        case 0:
-    //
-    //            myCalculatePlotData.theText = "Potential\n"
-    //
-    //            myCalculatePlotData.setThePlotParameters(color: "Blue", xLabel: "x", yLabel: "Potential", title: "Potential")
-    //
-    //            //          myCalculatePlotData.resetCalculatedTextOnMainThread()
-    //
-    //
-    //            var thePlotData :[(x: Double, y: Double)] =  []
-    //
-    //            for i in 0..<myPotentials.x.count {
-    //                let X = myPotentials.x[i]
-    //                var Y = myPotentials.Potential[i]
-    //                if Y > 100 {
-    //                    Y = 100
-    //                }
-    //                thePlotData.append((x: X, y: Y))
-    //            }
-    //            myCalculatePlotData.appendDataToPlot(plotData: thePlotData)
-    //
-    //            myCalculatePlotData.plotDataModel!.changingPlotParameters.xMax = myPotentials.x.max()! + 2.0
-    //
-    //            myCalculatePlotData.plotDataModel!.changingPlotParameters.xMin = myPotentials.x.min()! - 2.0
-    //
-    //            myCalculatePlotData.plotDataModel!.changingPlotParameters.yMax = 55.0
-    //
-    //            myCalculatePlotData.plotDataModel!.changingPlotParameters.yMin = myPotentials.Potential.min()! - 2.0
-    //
-    //            setObjectWillChange(theObject: self.plotData)
-    //
-    //        case 1:
-    //
-    //            myCalculatePlotData.theText = "Functional\n"
-    //
-    //            myCalculatePlotData.setThePlotParameters(color: "Blue", xLabel: "x", yLabel: "Functional", title: "Fuctional")
-    //
-    //            //         myCalculatePlotData.resetCalculatedTextOnMainThread()
-    //
-    //
-    //            var thePlotData :[(x: Double, y: Double)] =  []
-    //
-    //            for i in 0..<myFunctionals.Energy.count {
-    //                let X = myFunctionals.Energy[i]
-    //                var Y = myFunctionals.Functional[i]
-    //                if Y > 100 {
-    //                    Y = 100
-    //                }
-    //                else if Y < -100 {
-    //
-    //                    Y = -100
-    //
-    //                }
-    //                thePlotData.append((x: X, y: Y))
-    //            }
-    //
-    //
-    //        }
-    //    }
-    // func randomElement() -> Self.Element?
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
