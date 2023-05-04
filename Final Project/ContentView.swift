@@ -22,6 +22,10 @@ struct ContentView: View {
     @State var potentialArray: [Double] = []
     @State var trialEnergy: Double = 0.0
     @State var energy: Double = 0.0
+    @State var magnetizationForPlot: [Double] = []
+    @State var specificHeat: [Double] = []
+    @State var kTForX: [Double] = []
+    @State var thermalProperties = [ThermalProperties]()
     @StateObject var mySpins = Spins()
     @StateObject var myEnergy = Energy()
     @StateObject var myPotential = Potential()
@@ -32,24 +36,46 @@ struct ContentView: View {
     var body: some View {
         HStack {
             VStack {
+                Text("Magnetization vs. kT")
                 HStack {
-                    Text("N:")
-                    TextField("N:", text: $N)
+                    Chart {
+                        ForEach(thermalProperties, id: \.kT) { item in
+                            PointMark(
+                                x: .value("kT", item.kT),
+                                y: .value("Magnetization", item.magnetization)
+                            )
+                        }
+                    }
+                    .padding()
                 }
-                HStack {
-                    Text("kT:")
-                    TextField("kT:", text: $kT)
-                }
-//                Button(action: {
-//                    self.calculateColdMetropolisAlgorithm1D()
-//                    self.clearParameters ()})
-//                {Text("Calculate Spin Configuration from Cold Initial")}
-//                Button(action: {
-//                    self.calculateArbitraryMetropolisAlgorithm1D()
-//                    self.clearParameters ()})
-//                {Text("Calculate Spin Configuration from Arbitrary Initial")}
             }
-            VStack(){
+            VStack {
+                Text("Specific Heat vs. kT")
+                Chart {
+                    ForEach(thermalProperties, id: \.kT) { item in
+                        PointMark(
+                            x: .value("kT", item.kT),
+                            y: .value("Specific Heat", item.specificHeat)
+                        )
+                    }
+                }
+                .padding()
+            }
+        }
+            HStack {
+                VStack {
+                    Text("Energy vs. kT")
+                    Chart {
+                        ForEach(thermalProperties, id: \.kT) { item in
+                            PointMark(
+                                x: .value("kT", item.kT),
+                                y: .value("Energy", item.energy)
+                            )
+                        }
+                    }
+                    .padding()
+                }
+                
                 TimelineView(.animation) { timeline in
                     Canvas { context, size in
                         twoDMagnet.update(to: timeline.date, N: Int(Double(N)!), spinConfiguration: mySpins.spinConfiguration, isThereAnythingInMyVariable: false)
@@ -58,7 +84,7 @@ struct ContentView: View {
                             let N = Double(N)!
                             let upperLimit = pow(2.0, N)
                             let upperLimitInteger = Int(upperLimit)
-                            let rect = CGRect(x: spin.x * (size.width/CGFloat(mySpins.spinConfiguration.count - 1)), y: spin.y * (size.height/CGFloat(upperLimitInteger)), width: (size.height/CGFloat(mySpins.spinConfiguration.count - 1)), height: (size.height/CGFloat(upperLimitInteger)))
+                            let rect = CGRect(x: spin.x * (size.width/CGFloat(Float(upperLimitInteger))), y: spin.y * (size.height/CGFloat(Float(upperLimitInteger))), width: (size.height/CGFloat(Float(upperLimitInteger))), height: (size.height/CGFloat(Float(upperLimitInteger))))
                             let shape = Rectangle().path(in: rect)
                             if (spin.spin){
                                 context.fill(shape, with: .color(upColor))}
@@ -71,17 +97,42 @@ struct ContentView: View {
                 .background(.black)
                 .ignoresSafeArea()
                 .padding()
-                
-                
-                Button("Start", action: setupSpins)
             }
-        }
-    }
+                //                Button(action: {
+                //                    self.calculateColdMetropolisAlgorithm1D()
+                //                    self.clearParameters ()})
+                //                {Text("Calculate Spin Configuration from Cold Initial")}
+                //                Button(action: {
+                //                    self.calculateArbitraryMetropolisAlgorithm1D()
+                //                    self.clearParameters ()})
+                //                {Text("Calculate Spin Configuration from Arbitrary Initial")}
+                HStack {
+                    Text("N:")
+                    TextField("N:", text: $N)
+                        .padding()
+                    Text("kT:")
+                    TextField("kT:", text: $kT)
+                        .padding()
+                    
+                    
+                    Button("Start from Cold", action: setupSpinsFromCold)
+                        .padding()
+                    Button("Start from Arbitrary", action: setupSpinsFromArbitrary)
+                        .padding()
+                }
+            }
     
-    func setupSpins(){
+    func setupSpinsFromCold(){
         let N = Double(N)!
         self.clearParameters ()
         self.calculateColdMetropolisAlgorithm1D()
+        twoDMagnet.setup(N: Int(N), spinConfiguration: mySpins.spinConfiguration, isThereAnythingInMyVariable: false)
+    }
+    
+    func setupSpinsFromArbitrary(){
+        let N = Double(N)!
+        self.clearParameters ()
+        self.calculateArbitraryMetropolisAlgorithm1D()
         twoDMagnet.setup(N: Int(N), spinConfiguration: mySpins.spinConfiguration, isThereAnythingInMyVariable: false)
     }
     
@@ -252,9 +303,86 @@ struct ContentView: View {
             return R
         }
         /// U
-        func calculateInternalEnergy1D () {
-            
+    // From Equation 15.15
+    // U(T) = <E>
+    //
+    
+    func calculateInternalEnergy2D () -> Double {
+        let energyCount = myEnergy.energy1D.count
+        var totalEnergy: Double = 0.0
+        var internalEnergy: Double = 0.0
+        
+        for U in 0...(energyCount - 1) {
+            totalEnergy = totalEnergy + myEnergy.energy1D[U]
         }
+        let energyCountDouble = Double(energyCount)
+        internalEnergy = totalEnergy/energyCountDouble
+        print("Internal Energy:")
+        print(internalEnergy)
+        return internalEnergy
+    }
+    
+    // From Equation 15.14
+    //       N
+    //      ___
+    //      \
+    // M  =  >  s
+    //  j   /    i
+    //      ---
+    //      i=1
+    
+    func calculateMagnetization2D () -> Double {
+        let N = Double(N)!
+        let upperLimit = sqrt(N)
+        let upperLimitInteger = Int(upperLimit)
+        var magnetization: Double = 0.0
+        
+        for j in 0...(upperLimitInteger - 1){
+            for i in 0...(upperLimitInteger - 1) {
+                magnetization = magnetization + mySpins.spinConfiguration[i][j]
+            }
+        }
+        magnetizationForPlot.append(magnetization)
+        
+        return magnetization
+    }
+    
+    //Equation 15.17:
+    //                             _
+    //       1                    |     2
+    // U  = --- SUM(from t=1 to M)| (E )
+    //  2    M                    |_  t
+    //
+    func calculateU2 () -> Double {
+        var U2: Double = 0.0
+        var U2Sum: Double = 0.0
+        var energyValueForSum: Double = 0.0
+        let N = Double(N)!
+        let upperLimit = sqrt(N)
+        let upperLimitInteger = Int(upperLimit)
+        
+        //        for i in 1...(upperLimitInteger - 1) {
+        //            energyValueForSum = myEnergy.energy1D[i]
+        //            U2Sum = pow(energyValueForSum, 2.0)
+        //        }
+        U2 = U2Sum/N
+        
+        return U2
+    }
+    
+    func calculateSpecificHeat () -> Double {
+        let N = Double(N)!
+        let kT = Double(kT)!
+        var specificHeatValue: Double = 0.0
+        var U2 = calculateU2()
+        var U = calculateInternalEnergy2D()
+        
+        specificHeatValue = (U2 - pow(U, 2.0))/(pow(N, 2.0)*pow(kT, 2.0))
+        specificHeat.append(specificHeatValue)
+        
+        return specificHeatValue
+    }
+    
         // 15.4.1 Metropolis Algorithm Implementation
     func calculateColdMetropolisAlgorithm1D () {
             let J: Int = 1
@@ -264,6 +392,7 @@ struct ContentView: View {
             var count: [Double] = []
             var timeValue = 0.0
             calculateColdSpinConfiguration1D ()
+            kTForX.append(0.0)
           //  for y in 0...(upperLimitInteger - 1) {
                 for x in 1...(upperLimitInteger) {
                     var trialSpins = calculateTrialSpinConfiguration1D(x: x)
@@ -272,12 +401,20 @@ struct ContentView: View {
                     calculateEnergyCheck(x: x, trialSpins: trialSpins)
                     //trialEnergy = 0.0
                     //energy = 0.0
+                    let X = Double(x)
+                    kTForX.append(X)
+                    calculateU2()
+                    calculateSpecificHeat()
+                    calculateMagnetization2D()
+                    calculateInternalEnergy2D()
                 }
-            //0    timeValue = Double(y-1) + 1.0
-              //  count.append(timeValue)
-              //  mySpins.timeComponent.append(count)
-             //   mySpins.spinConfiguration.append(mySpins.spinConfiguration[y])
-           // }
+        
+            for i in 0...(myEnergy.energy1D.count - 1) {
+                let kT = Double(kT)!
+                
+                thermalProperties.append(ThermalProperties(kT: kTForX[i], specificHeat: specificHeat[i], magnetization: magnetizationForPlot[i], energy: myEnergy.energy1D[i]))
+            }
+        
             print(mySpins.spinConfiguration.count)
             print(mySpins.spinConfiguration)
             print(mySpins.timeComponent)
@@ -292,7 +429,6 @@ struct ContentView: View {
             var count: [Double] = []
             var timeValue = 0.0
             calculateArbitrarySpinConfiguration1D ()
-            for y in 0...(upperLimitInteger - 1) {
                 for x in 1...(upperLimitInteger) {
                     var trialSpins = calculateTrialSpinConfiguration1D(x: x)
                     calculateEnergyOfTrialConfiguration1D(x: x, trialSpins: trialSpins, J: J)
@@ -300,12 +436,21 @@ struct ContentView: View {
                     calculateEnergyCheck(x: x, trialSpins: trialSpins)
                     //trialEnergy = 0.0
                     //energy = 0.0
+                    let X = Double(x)
+                    kTForX.append(X)
+                    calculateU2()
+                    calculateSpecificHeat()
+                    calculateMagnetization2D()
+                    calculateInternalEnergy2D()
                 }
-                timeValue = Double(y-1) + 1.0
               //  count.append(timeValue)
               //  mySpins.timeComponent.append(count)
              //   mySpins.spinConfiguration.append(mySpins.spinConfiguration[y])
-            }
+        for i in 0...(myEnergy.energy1D.count - 1) {
+            let kT = Double(kT)!
+            
+            thermalProperties.append(ThermalProperties(kT: kTForX[i], specificHeat: specificHeat[i], magnetization: magnetizationForPlot[i], energy: myEnergy.energy1D[i]))
+        }
             print(mySpins.spinConfiguration.count)
             print(mySpins.spinConfiguration)
             print(mySpins.timeComponent)

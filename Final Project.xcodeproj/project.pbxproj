@@ -29,6 +29,9 @@
 		AB849A3029E0C67500650EC3 /* Potential.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB849A2F29E0C67500650EC3 /* Potential.swift */; };
 		AB849A3129E0C67500650EC3 /* Potential.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB849A2F29E0C67500650EC3 /* Potential.swift */; };
 		AB849A3229E0C67500650EC3 /* Potential.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB849A2F29E0C67500650EC3 /* Potential.swift */; };
+		AB8D1CD92A0428F8002C247B /* Plot Data.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB8D1CD82A0428F8002C247B /* Plot Data.swift */; };
+		AB8D1CDA2A0428F8002C247B /* Plot Data.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB8D1CD82A0428F8002C247B /* Plot Data.swift */; };
+		AB8D1CDB2A0428F8002C247B /* Plot Data.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB8D1CD82A0428F8002C247B /* Plot Data.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -65,6 +68,7 @@
 		AB849A2729E0B2C700650EC3 /* Spins.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Spins.swift; sourceTree = "<group>"; };
 		AB849A2B29E0C4DB00650EC3 /* Energy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Energy.swift; sourceTree = "<group>"; };
 		AB849A2F29E0C67500650EC3 /* Potential.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Potential.swift; sourceTree = "<group>"; };
+		AB8D1CD82A0428F8002C247B /* Plot Data.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Plot Data.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -118,11 +122,12 @@
 				AB8499FC29E0A47D00650EC3 /* Final_ProjectApp.swift */,
 				AB8499FE29E0A47D00650EC3 /* ContentView.swift */,
 				AB849A2729E0B2C700650EC3 /* Spins.swift */,
+				AB8D1CD82A0428F8002C247B /* Plot Data.swift */,
 				AB849A2B29E0C4DB00650EC3 /* Energy.swift */,
 				AB849A2F29E0C67500650EC3 /* Potential.swift */,
 				AB4212F729F2E99A00BF2B0F /* Spin Struct.swift */,
-				AB849A0029E0A47E00650EC3 /* Assets.xcassets */,
 				AB4212FB29F2E9B700BF2B0F /* twoDMagnet.swift */,
+				AB849A0029E0A47E00650EC3 /* Assets.xcassets */,
 				AB849A0529E0A47E00650EC3 /* Final_Project.entitlements */,
 				AB849A0229E0A47E00650EC3 /* Preview Content */,
 			);
@@ -287,6 +292,7 @@
 				AB849A2829E0B2C700650EC3 /* Spins.swift in Sources */,
 				AB4212F829F2E99A00BF2B0F /* Spin Struct.swift in Sources */,
 				AB4212FC29F2E9B700BF2B0F /* twoDMagnet.swift in Sources */,
+				AB8D1CD92A0428F8002C247B /* Plot Data.swift in Sources */,
 				AB849A3029E0C67500650EC3 /* Potential.swift in Sources */,
 				AB849A2C29E0C4DB00650EC3 /* Energy.swift in Sources */,
 				AB8499FF29E0A47D00650EC3 /* ContentView.swift in Sources */,
@@ -301,6 +307,7 @@
 				AB849A0F29E0A47E00650EC3 /* Final_ProjectTests.swift in Sources */,
 				AB4212FD29F2E9B700BF2B0F /* twoDMagnet.swift in Sources */,
 				AB849A2D29E0C4DB00650EC3 /* Energy.swift in Sources */,
+				AB8D1CDA2A0428F8002C247B /* Plot Data.swift in Sources */,
 				AB4212F929F2E99A00BF2B0F /* Spin Struct.swift in Sources */,
 				AB849A3129E0C67500650EC3 /* Potential.swift in Sources */,
 				AB849A2929E0B2C700650EC3 /* Spins.swift in Sources */,
@@ -314,6 +321,7 @@
 				AB849A2A29E0B2C700650EC3 /* Spins.swift in Sources */,
 				AB4212FA29F2E99A00BF2B0F /* Spin Struct.swift in Sources */,
 				AB4212FE29F2E9B700BF2B0F /* twoDMagnet.swift in Sources */,
+				AB8D1CDB2A0428F8002C247B /* Plot Data.swift in Sources */,
 				AB849A3229E0C67500650EC3 /* Potential.swift in Sources */,
 				AB849A2E29E0C4DB00650EC3 /* Energy.swift in Sources */,
 				AB849A1929E0A47E00650EC3 /* Final_ProjectUITests.swift in Sources */,
